@@ -32,7 +32,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="3d.cu" />
 		<Unit filename="Makefile" />
 		<Unit filename="advance.cu">
 			<Option virtualFolder="CUDA Sources/" />
@@ -52,6 +51,7 @@
 			<Option link="1" />
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
+		<Unit filename="diffterm.mako" />
 		<Unit filename="diffterm2.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
@@ -63,6 +63,7 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="gen.py" />
 		<Unit filename="header.h" />
 		<Unit filename="hypterm.cu">
 			<Option compile="1" />

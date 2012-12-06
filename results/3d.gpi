@@ -1,0 +1,25 @@
+#!/bin/bash
+gnuplot << EOF
+
+# $1 data file
+# $2 output filename
+
+set term postscript enhanced color
+set datafile missing 'inf'
+set grid
+set output '$2'
+
+set view 40,120
+set title  'Running time for blockDim configurations'
+set xlabel 'blockDim.x'
+set ylabel 'blockDim.y'
+set zlabel 'Running time (us)' rotate by 90 offset -3,0,0
+set logscale x 2
+set logscale y 2
+# set xtic 8
+
+# Contour {base|surface|both}
+set contour surface
+
+splot '$1' with pm3d
+

@@ -207,18 +207,6 @@ extern void gpu_diffterm(
 	double *d_q,				// i:
 	double *flux				// o:
 );
-extern void gpu_diffterm_lv1(
-	global_const_t h_const, 	// i: Global struct containing application parameters
-	global_const_t *d_const,	// i: Device pointer to global struct containing application paramters
-	double *d_q,				// i:
-	double *d_difflux				// o:
-);
-extern void gpu_diffterm_lv2(
-	global_const_t h_const, 	// i: Global struct containing application parameters
-	global_const_t *d_const,	// i: Device pointer to global struct containing application paramters
-	double *d_q,				// i:
-	double *d_difflux				// o:
-);
 extern void gpu_diffterm2(
 	global_const_t h_const, 	// i: Global struct containing application parameters
 	global_const_t *d_const,	// i: Device pointer to global struct containing application paramters
@@ -227,6 +215,13 @@ extern void gpu_diffterm2(
 	double *d_flux				// o: just set zeroes for hypterm
 );
 
+extern void gpu_diffterm_lv1_lv2(
+	global_const_t h_const, 	// i: Global struct containing application parameters
+	global_const_t *d_const,	// i: Device pointer to global struct containing application paramters
+	double *d_q,				// i:
+	double *d_difflux,			// o:
+	double *d_flux				// o: just set zeroes for hypterm
+);
 
 extern void advance_test();
 extern void advance_cpu_test(
