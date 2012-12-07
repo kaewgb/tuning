@@ -3,14 +3,10 @@ from run import syscall
 from mako.template import Template
 
 # Initiation
-diffterm = Template(filename='diffterm_gen.mako');
+diffterm = Template(filename='hypterm3.mako');
 
-thrust = os.environ['HOME']+'/software/';
-cpu_obj_files = ['advance_cpu.o', 'diffterm_cpu.o', 'hypterm_cpu.o', 'util_cpu.o', 'ctoprim.o', 'util.o'];
-gpu_obj_files = ['main.o', 'advance.o', 'ctoprim.o', 'diffterm2.o', 'hypterm2.o', 'util.o'];
-obj_files = list(set(cpu_obj_files) | set(gpu_obj_files)); #Union
-
-nvcc_flags = ['-I%s'%thrust, '-arch=sm_20', '--fmad=false', '--ptxas-options=-v', '--disable-warnings'];
+obj_files = ['onepass.o', 'util.o', 'util_cpu.o'];
+nvcc_flags = ['-arch=sm_20', '--fmad=false', '--ptxas-options=-v', '--disable-warnings'];
 
 ng = 4;
 max_threads_per_block = 1024;
@@ -27,7 +23,7 @@ for block_dim_y in block_dim_list:
 		shared_dim_y = block_dim_y + ng + ng;
 
 		config = '%d_%d'%(block_dim_x, block_dim_y);
-		target = 'cache/diffterm_gen_' + config;
+		target = 'cache/hypterm3_' + config;
 
 		with open(target+'.cu', 'w') as fout:
 			fout.write(diffterm.render(block_dim_x=str(block_dim_x),
