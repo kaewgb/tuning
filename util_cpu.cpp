@@ -289,21 +289,9 @@ void read_configurations(global_const_t &h_const, int argc, char *argv[]){
 	char *dest, *config_file_name;
 	FILE *fin;
 
-	if(argc == 2){
-		config_file_name = (char *) malloc(200*sizeof(char));
-		sprintf(config_file_name, "testcases/%s_general_input", argv[1]);
-
-		h_const.input_file_name = (char *) malloc(200*sizeof(char));
-		h_const.output_file_name = (char *) malloc(200*sizeof(char));
-
-		sprintf(h_const.input_file_name, "testcases/%s_multistep_input", argv[1]);
-		sprintf(h_const.output_file_name, "%s_multistep_output", argv[1]);
-	}
-	else{
-		config_file_name = (char *) "testcases/general_input";
-		h_const.input_file_name = (char *) "testcases/multistep_input";
-		h_const.output_file_name = (char *) "multistep_output";
-	}
+	config_file_name = (char *) "testcases/general_input";
+	h_const.input_file_name = (char *) "testcases/multistep_input";
+	h_const.output_file_name = (char *) "multistep_output";
 
 	fin = fopen(config_file_name, "r");
 	if(fin == NULL){
@@ -331,11 +319,25 @@ void read_configurations(global_const_t &h_const, int argc, char *argv[]){
 		h_const.dim_g[i] 	= h_const.hi[i] - h_const.lo[i] + 1 + h_const.ng + h_const.ng;
 		h_const.pitch[i]   = h_const.dim[i];
 		h_const.pitch_g[i] = h_const.dim_g[i];
+
+		// A quick fix
+		if(argc == 2){
+
+			h_const.dim[i] = atoi(argv[1]);
+			h_const.dim_g[i] = h_const.dim[i] + h_const.ng + h_const.ng;
+
+			h_const.lo[i] = h_const.ng;
+			h_const.hi[i] = h_const.dim[i] + h_const.ng - 1;
+
+			h_const.pitch[i]   = h_const.dim[i];
+			h_const.pitch_g[i] = h_const.dim_g[i];
+
+		}
 	}
 	h_const.pitch[0]   = PAD(h_const.dim[0]);      // No need to pad Y and Z, padding X alone will make them aligned
 	h_const.pitch_g[0] = PAD(h_const.dim_g[0]);    // No need to pad Y and Z, padding X alone will make them aligned
-	printf("pitch:   %d %d %d\n", h_const.pitch[0], h_const.pitch[1], h_const.pitch[2]);
-	printf("pitch_g: %d %d %d\n", h_const.pitch_g[0], h_const.pitch_g[1], h_const.pitch_g[2]);
+//	printf("pitch:   %d %d %d\n", h_const.pitch[0], h_const.pitch[1], h_const.pitch[2]);
+//	printf("pitch_g: %d %d %d\n", h_const.pitch_g[0], h_const.pitch_g[1], h_const.pitch_g[2]);
 
 	h_const.comp_offset_g_padded    = h_const.pitch_g[0] * h_const.pitch_g[1] * h_const.pitch_g[2];
 	h_const.plane_offset_g_padded   = h_const.pitch_g[0] * h_const.pitch_g[1];

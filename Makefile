@@ -12,9 +12,12 @@ two:			twopasses.o hypterm2.o $(COMMON_OBJS)
 one:			onepass.o hypterm3.o $(COMMON_OBJS)
 				$(NVCC) -o $@ $^
 
+test:			test.o simple.o $(COMMON_OBJS)
+				$(NVCC) -o $@ $^
+
 %.o:		%.cpp $(HEADERS)
 			$(CC) $(CFLAGS) -c $< -o $@
 %.o:		%.cu $(HEADERS)
 			$(NVCC) -c $< -o $@ $(NVCCFLAGS)
 clean:
-			rm -f *.o one two
+			rm -f *.o one two test
