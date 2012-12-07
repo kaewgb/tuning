@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 	//!
 	//! Allocation
 	//!
-	allocate_variables(U, Unew, Q, D, F, d_U, d_Unew, d_Q, d_D, d_F, false, true);
+	allocate_variables(U, Unew, Q, D, F, d_U, d_Unew, d_Q, d_D, d_F);
 
 	//!
 	//! Advance
@@ -44,26 +44,29 @@ int main(int argc, char *argv[]){
 //	init_data(h_const, U);
 
 	total_time = -get_time();
+	gpu_copy_from_host_4D(d_U, U, h_const.pitch_g, h_const.nc);
+	gpu_fill_boundary(h_const, d_const_ptr, d_U);
 	FOR(i, 0, h_const.nsteps)
-		advance(h_const, U, Unew, Q, D, F, dt);
+		gpu_hypterm3(h_const, d_const, d_Unew, d_Q, d_F);
 
+	gpu_copy_to_host_4D(U, d_U, h_const.pitch_g, h_const.nc);
 	total_time += get_time();
 	printf("Total time: %lf\n", total_time);
 
 
-	fout = fopen("correct", "w");
+	fout = fopen("output", "w");
 	fprintf(fout, "%d\n", h_const.nc);
 	fprintf(fout, "%d %d %d\n", h_const.dim_g[0], h_const.dim_g[1], h_const.dim_g[2]);
 	print_4D(fout, U, h_const.dim_g, h_const.nc);
 	fclose(fout);
 
-
 	//!
 	//!	Free Allocations
 	//!
-	free_variables(U, Unew, Q, D, F, d_U, d_Unew, d_Q, d_D, d_F, false, true);
+	free_variables(U, Unew, Q, D, F, d_U, d_Unew, d_Q, d_D, d_F);
 
 	return 0;
 
 }
+
 

@@ -33,52 +33,20 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="Makefile" />
-		<Unit filename="advance.cu">
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
-		<Unit filename="advance_cpu.cpp" />
-		<Unit filename="cpu.cu">
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
-		<Unit filename="ctoprim.cu">
-			<Option compile="1" />
-			<Option link="1" />
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
-		<Unit filename="ddiff.cpp" />
-		<Unit filename="diffterm.cu">
-			<Option compile="1" />
-			<Option link="1" />
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
-		<Unit filename="diffterm.mako" />
-		<Unit filename="diffterm2.cu">
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
-		<Unit filename="diffterm3.cu">
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
-		<Unit filename="diffterm_cpu.cpp" />
-		<Unit filename="extract.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
 		<Unit filename="gen.py" />
 		<Unit filename="header.h" />
-		<Unit filename="hypterm.cu">
-			<Option compile="1" />
-			<Option link="1" />
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
 		<Unit filename="hypterm2.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
-		<Unit filename="hypterm_cpu.cpp" />
+		<Unit filename="hypterm3.cu">
+			<Option virtualFolder="CUDA Sources/" />
+		</Unit>
 		<Unit filename="job-template" />
 		<Unit filename="job-test" />
-		<Unit filename="main.cu">
-			<Option compile="1" />
-			<Option link="1" />
+		<Unit filename="onepass.cu">
+			<Option virtualFolder="CUDA Sources/" />
+		</Unit>
+		<Unit filename="twopasses.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
 		<Unit filename="util.cu">

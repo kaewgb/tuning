@@ -45,8 +45,9 @@ int main(int argc, char *argv[]){
 
 	total_time = -get_time();
 	gpu_copy_from_host_4D(d_U, U, h_const.pitch_g, h_const.nc);
+	gpu_fill_boundary(h_const, d_const_ptr, d_U);
 	FOR(i, 0, h_const.nsteps)
-		gpu_advance(h_const, d_const_ptr, d_U, d_Unew, d_Q, d_D, d_F, dt);
+		gpu_hypterm2(h_const, d_const, d_Unew, d_Q, d_F);
 
 	gpu_copy_to_host_4D(U, d_U, h_const.pitch_g, h_const.nc);
 	total_time += get_time();
