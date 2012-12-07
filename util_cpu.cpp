@@ -291,17 +291,17 @@ void read_configurations(global_const_t &h_const, int argc, char *argv[]){
 
 	if(argc == 2){
 		config_file_name = (char *) malloc(200*sizeof(char));
-		sprintf(config_file_name, "../testcases/%s_general_input", argv[1]);
+		sprintf(config_file_name, "testcases/%s_general_input", argv[1]);
 
 		h_const.input_file_name = (char *) malloc(200*sizeof(char));
 		h_const.output_file_name = (char *) malloc(200*sizeof(char));
 
-		sprintf(h_const.input_file_name, "../testcases/%s_multistep_input", argv[1]);
+		sprintf(h_const.input_file_name, "testcases/%s_multistep_input", argv[1]);
 		sprintf(h_const.output_file_name, "%s_multistep_output", argv[1]);
 	}
 	else{
-		config_file_name = (char *) "../testcases/general_input";
-		h_const.input_file_name = (char *) "../testcases/multistep_input";
+		config_file_name = (char *) "testcases/general_input";
+		h_const.input_file_name = (char *) "testcases/multistep_input";
 		h_const.output_file_name = (char *) "multistep_output";
 	}
 
