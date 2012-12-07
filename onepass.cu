@@ -37,11 +37,11 @@ int main(int argc, char *argv[]){
 	//!
 	//! Advance
 	//!
-	fin = fopen(h_const.input_file_name, "r");
-	FOR(l, 0, h_const.nc)
-		read_3D(fin, U, h_const.dim_g, l);
-	fclose(fin);
-//	init_data(h_const, U);
+//	fin = fopen(h_const.input_file_name, "r");
+//	FOR(l, 0, h_const.nc)
+//		read_3D(fin, U, h_const.dim_g, l);
+//	fclose(fin);
+	init_data(h_const, U);
 
 	total_time = -get_time();
 	gpu_copy_from_host_4D(d_U, U, h_const.pitch_g, h_const.nc);

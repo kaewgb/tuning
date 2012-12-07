@@ -33,12 +33,14 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="Makefile" />
-		<Unit filename="gen.py" />
 		<Unit filename="header.h" />
 		<Unit filename="hypterm2.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
 		<Unit filename="hypterm3.cu">
+			<Option virtualFolder="CUDA Sources/" />
+		</Unit>
+		<Unit filename="irho.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
 		<Unit filename="job-template" />
