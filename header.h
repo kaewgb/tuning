@@ -12,6 +12,9 @@
 #define CEIL(x, div)	(((x) + (div)-1)/(div))
 //#define PAD(x)          ((((((x)-1))>>3)+1)<<3)
 #define PAD(x)          ((((((x)-1))>>4)+1)<<4)
+#define PAD32(x)		((((((x)-1))>>2)+1)<<2)
+#define PAD128(x)		((((((x)-1))>>4)+1)<<4)
+#define PAD256(x)		((((((x)-1))>>5)+1)<<5)
 
 // CONSTANTS
 #define	DIM		3

@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -6,8 +5,8 @@
 #include "util.cuh"
 #include "util.h"
 
-#define BLOCK_DIM_X		16
-#define	BLOCK_DIM_Y		16
+#define BLOCK_SMALL		8
+#define	BLOCK_LARGE		16
 #define	THREAD_Z		8
 
 __global__ void gpu_simple_stencil_kernel(
@@ -20,7 +19,7 @@ __global__ void gpu_simple_stencil_kernel(
 	double unp1, unp2, unp3, unp4, unm1, unm2, unm3, unm4;
 	double flux_irho;
 
-	__shared__ double      s_qu[BLOCK_DIM_Y+NG+NG][BLOCK_DIM_X+NG+NG];
+	__shared__ double      s_qu[BLOCK_LARGE+NG+NG][BLOCK_LARGE+NG+NG];
 
 	// Load to shared mem
 	for(z=0;z<THREAD_Z;z++){
@@ -34,8 +33,8 @@ __global__ void gpu_simple_stencil_kernel(
 
 
 		__syncthreads();	//for the next z round
-		for(sj=blockIdx.y*blockDim.y+threadIdx.y, tidy=threadIdx.y; tidy < BLOCK_DIM_Y+NG+NG; sj+=blockDim.y, tidy+=blockDim.y){
-			for(si=blockIdx.x*blockDim.x+threadIdx.x, tidx=threadIdx.x; tidx < BLOCK_DIM_X+NG+NG; si+=blockDim.x, tidx+=blockDim.x){
+		for(sj=blockIdx.y*blockDim.y+threadIdx.y, tidy=threadIdx.y; tidy < BLOCK_LARGE+NG+NG; sj+=blockDim.y, tidy+=blockDim.y){
+			for(si=blockIdx.x*blockDim.x+threadIdx.x, tidx=threadIdx.x; tidx < BLOCK_LARGE+NG+NG; si+=blockDim.x, tidx+=blockDim.x){
 				if( si < g->dim_g[0] && sj < g->dim_g[1] && sk < g->dim_g[2]){
 
 					idx = (sk+g->ng)*g->plane_offset_g_padded + sj*g->pitch_g[0] + si;
@@ -92,6 +91,34 @@ __global__ void gpu_simple_stencil_kernel(
 	}
 }
 
+__global__ void plusone(
+	global_const_t *g,	// i:
+	double *q			// i/o:
+){
+	int i,j,k,z,idx;
+	i = blockIdx.x*blockDim.x + threadIdx.x;
+	j = blockIdx.y*blockDim.y + threadIdx.y;
+	k = (blockIdx.z*blockDim.z + threadIdx.z)*THREAD_Z;
+
+	for(z=0;z<THREAD_Z;z++){
+		idx = (k+z+g->ng)*g->plane_offset_g_padded + (j+g->ng)*g->pitch_g[0] + i+g->ng;
+		q[idx] = q[idx] + 1;
+	}
+
+}
+
+__global__ void usleep(){
+	clock_t start = clock();
+	clock_t now = clock();
+	clock_t cycles;
+
+	do{
+		cycles = (now > start)? (now-start):(now+(0xffffffff - start));
+		now = clock();
+
+	}while(cycles < CLOCKS_PER_SEC);
+}
+
 void gpu_simple_stencil(
 	global_const_t h_const, 	// i: Global struct containing application parameters
 	global_const_t *d_const,	// i: Device pointer to global struct containing application paramters
@@ -102,9 +129,33 @@ void gpu_simple_stencil(
 	// cudaFuncCachePreferShared | cudaFuncCachePreferL1
 	cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 
-	dim3 block_dim(BLOCK_DIM_X, BLOCK_DIM_Y, 1);
-	dim3 grid_dim(CEIL(h_const.dim[0], BLOCK_DIM_X), CEIL(h_const.dim[1], BLOCK_DIM_Y), CEIL(h_const.dim[2], THREAD_Z));
+	dim3 block_dim(BLOCK_LARGE, BLOCK_LARGE, 1);
+	dim3 grid_dim(CEIL(h_const.dim[0], BLOCK_LARGE), CEIL(h_const.dim[1], BLOCK_LARGE), CEIL(h_const.dim[2], THREAD_Z));
+	printf("%d %d %d\n", h_const.dim[0], h_const.dim[1], h_const.dim[2]);
 
-	gpu_simple_stencil_kernel<<<grid_dim, block_dim>>>(d_const, d_q, d_flux);
 
+	struct timeval s, e;
+
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+
+	gettimeofday(&s, NULL);
+	cudaEventRecord(start, 0);
+//	gpu_simple_stencil_kernel<<<grid_dim, block_dim>>>(d_const, d_q, d_flux);
+	plusone<<<grid_dim, block_dim>>>(d_const, d_q);
+//	usleep<<<grid_dim, block_dim>>>();
+	cudaEventRecord(stop, 0);
+	cudaEventSynchronize(stop);
+
+	cudaThreadSynchronize();
+	gettimeofday(&e, NULL);
+
+	float elapsedTime;
+	cudaEventElapsedTime(&elapsedTime, start, stop);
+	printf("%lf vs %lf\n", elapsedTime, (double)(e.tv_sec-s.tv_sec) + 1.0E-6*(e.tv_usec-s.tv_usec));
+
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
 }
+

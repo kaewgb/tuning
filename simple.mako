@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include "header.h"
-#include "util.cuh"
-#include "util.h"
+#include "../header.h"
+#include "../util.cuh"
+#include "../util.h"
 
-#define BLOCK_DIM_X		16
-#define	BLOCK_DIM_Y		16
-#define	THREAD_Z		8
+#define BLOCK_DIM_X		${block_dim_x}
+#define	BLOCK_DIM_Y		${block_dim_y}
+#define	THREAD_Z		${thread_z}
 
 __global__ void gpu_simple_stencil_kernel(
 	global_const_t *g,	// i:
@@ -20,7 +20,7 @@ __global__ void gpu_simple_stencil_kernel(
 	double unp1, unp2, unp3, unp4, unm1, unm2, unm3, unm4;
 	double flux_irho;
 
-	__shared__ double      s_qu[BLOCK_DIM_Y+NG+NG][BLOCK_DIM_X+NG+NG];
+	__shared__ double      s_qu[BLOCK_DIM_Y+NG+NG][${shared_pad}];
 
 	// Load to shared mem
 	for(z=0;z<THREAD_Z;z++){
@@ -100,7 +100,7 @@ void gpu_simple_stencil(
 ){
 	// Set preferred cache configuration (48KB smem | 16KB smem)
 	// cudaFuncCachePreferShared | cudaFuncCachePreferL1
-	cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
+	cudaDeviceSetCacheConfig(${smem});
 
 	dim3 block_dim(BLOCK_DIM_X, BLOCK_DIM_Y, 1);
 	dim3 grid_dim(CEIL(h_const.dim[0], BLOCK_DIM_X), CEIL(h_const.dim[1], BLOCK_DIM_Y), CEIL(h_const.dim[2], THREAD_Z));

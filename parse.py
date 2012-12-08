@@ -2,36 +2,32 @@ def parse(log, kernel):
 	with open(log, 'r') as fin:
 		lines = fin.readlines();
 
-	lines = filter(lambda x: x[0]!='#', lines);
+	lines = filter(lambda l: l[0]!='#', lines);
 	head = lines[0].rstrip().split(',');
-	idx = dict();
-	for i in range(0, len(head)):
-		idx[head[i]] = i;
 
-	l = list();
-	for line in lines[1:]:
-		val = line.rstrip().split(',');
-		if val[idx['method']].find(kernel) < 0:
-			continue;
-		l.append(val);
+	lines = filter(lambda l: l.find(kernel) >= 0, lines);
+	str_of_stats = map(lambda l: l.rstrip().split(',')[1:], lines);
+	stats = map(lambda l: map(float, l), str_of_stats);
 
-	stats=dict();
-	keys = ['gputime', 'cputime'];
-	for key in keys:
-		stats[key] = map(lambda x: float(x[idx[key]]), l);
+#	print head;
+#	print len(head)
+#	print stats[:3];
 
-#	for key in keys:
-#		print '%s\t%lf\t%lf\t%lf'%( key, min(stats[key]), sum(stats[key])/len(stats[key]), max(stats[key]));
+	res_min = list();
+	res_avg = list();
+	res_max = list();
+	for i in range(0, head.index('active_cycles')-1):
+		col = map(lambda l: l[i], stats);
+		try:
+			res_min.append(min(col));
+			res_avg.append(sum(col)/len(col));
+			res_max.append(max(col));
+		except:
+			res_min.append(float('inf'));
+			res_avg.append(float('inf'));
+			res_max.append(float('inf'));
 
-	key = 'cputime';
-	try:
-		return (min(stats[key]), sum(stats[key])/len(stats[key]), max(stats[key]));
-	except:
-		return (float('inf'), float('inf'), float('inf'));
+	return (res_min, res_avg, res_max);
 
-def gen2Darray(dim_x, dim_y):
-	array = [];
-	for i in range(0, dim_y):
-		array.append([float('inf') for i in range(0, dim_x)]);
-	return array;
+
 
