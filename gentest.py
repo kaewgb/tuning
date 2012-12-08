@@ -65,7 +65,7 @@ for config in configs:
 	syscall(cmd);
 
 	# Collect the profiling results
-	(res_min, res_avg, res_max) = parse('cuda_profile_0.log', 'simple');
+	(res_min, res_avg, res_max) = parse(os.environ['COMPUTE_PROFILE_LOG'], 'simple');
 
 	print >>fmin, config + '|' + string.join(map(str, res_min), ',');
 	print >>favg, config + '|' + string.join(map(str, res_avg), ',');

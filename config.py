@@ -10,7 +10,7 @@ smem_choices		= [16, 48];
 bypass_l1_choices	= [0, 1];
 
 ng = 4;
-global_pad = 256;
+global_pad = 128;
 
 for block_dim_x in block_dim_choices:
 	for block_dim_y in block_dim_choices:

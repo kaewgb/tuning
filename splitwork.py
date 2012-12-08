@@ -20,9 +20,11 @@ for r in ranges:
 		for i in range(max(0, r[0]), min(len(lines),r[1])):
 			print >>fout, lines[i],
 
-	with open('jobs/job-'+filename, 'w') as fout:
-		fout.write(template.render(jobid=filename));
+	# Dirac
+#	with open('jobs/job-'+filename, 'w') as fout:
+#		fout.write(template.render(jobid=filename));
 
+	# Maeka
 	with open('jobs/job-maeka-'+filename+'.sh', 'w') as fout:
 		fout.write(maeka.render(jobid=filename));
 

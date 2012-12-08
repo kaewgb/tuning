@@ -5,7 +5,7 @@
 		<Option title="tuning" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="CUDA Sources/;Python Scripts/;" />
+		<Option virtualFolders="CUDA Sources/;Python Scripts/;Mako Templates/;" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/gpu" prefix_auto="1" extension_auto="1" />
@@ -56,11 +56,15 @@
 		<Unit filename="hypterm2.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
+		<Unit filename="hypterm2.mako">
+			<Option virtualFolder="Mako Templates/" />
+		</Unit>
 		<Unit filename="hypterm3.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
-		<Unit filename="job-template" />
-		<Unit filename="job-test" />
+		<Unit filename="hypterm3.mako">
+			<Option virtualFolder="Mako Templates/" />
+		</Unit>
 		<Unit filename="onepass.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
@@ -70,11 +74,15 @@
 		<Unit filename="run.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="shuffle.py" />
+		<Unit filename="shuffle.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="simple.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
-		<Unit filename="simple.mako" />
+		<Unit filename="simple.mako">
+			<Option virtualFolder="Mako Templates/" />
+		</Unit>
 		<Unit filename="splitwork.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
