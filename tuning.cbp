@@ -39,6 +39,7 @@
 		<Unit filename="config.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
+		<Unit filename="config_one.py" />
 		<Unit filename="dummy.conf" />
 		<Unit filename="dummy.py">
 			<Option virtualFolder="Python Scripts/" />
@@ -63,6 +64,12 @@
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
 		<Unit filename="hypterm3.mako">
+			<Option virtualFolder="Mako Templates/" />
+		</Unit>
+		<Unit filename="job-maeka.mako">
+			<Option virtualFolder="Mako Templates/" />
+		</Unit>
+		<Unit filename="job.mako">
 			<Option virtualFolder="Mako Templates/" />
 		</Unit>
 		<Unit filename="onepass.cu">

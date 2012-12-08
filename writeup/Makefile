@@ -1,9 +1,19 @@
-pdf-local: report.pdf
+default: report.pdf
 
-report.pdf: *.tex
-	$(PDFLATEX) report.tex
-	$(PDFLATEX) report.tex
-	$(PDFLATEX) report.tex
+SOURCES=				\
+	report.tex			\
+	_intro.tex			\
+	_background.tex 	\
+	_hypterm.tex		\
+	_conclusion.tex
 
-clean-local:
-	rm -rf *pdf *aux *dvi *ps *log *bak
+report.pdf: $(SOURCES)
+	latex $<
+	bibtex report
+	latex $<
+	pdflatex $<
+
+.PHONY:	clean
+
+clean:
+	rm -rf *.pdf *.aux *.dvi *.ps *.log *.bak

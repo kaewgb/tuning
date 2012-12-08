@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "header.h"
-#include "util.cuh"
-#include "util.h"
+#include "../header.h"
+#include "../util.cuh"
+#include "../util.h"
 
 #define BLOCK_DIM_X		${block_dim_x}
 #define	BLOCK_DIM_Y		${block_dim_y}
