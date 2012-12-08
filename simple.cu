@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include "header.h"
 #include "util.cuh"
 #include "util.h"
@@ -90,6 +91,17 @@ __global__ void gpu_simple_stencil_kernel(
 	}
 }
 
+__global__ void usleep(){
+	clock_t start = clock();
+	clock_t now = clock();
+	clock_t cycles;
+
+	do{
+		cycles = (now > start)? (now-start):(now+(0xffffffff - start));
+		now = clock();
+
+	}while(cycles < CLOCKS_PER_SEC);
+}
 
 void gpu_simple_stencil(
 	global_const_t h_const, 	// i: Global struct containing application parameters
@@ -97,9 +109,34 @@ void gpu_simple_stencil(
 	double *d_q,				// i:
 	double *d_flux				// o:
 ){
+	// Set preferred cache configuration (48KB smem | 16KB smem)
+	// cudaFuncCachePreferShared | cudaFuncCachePreferL1
+	cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 
 	dim3 block_dim(BLOCK_LARGE, BLOCK_LARGE, 1);
 	dim3 grid_dim(CEIL(h_const.dim[0], BLOCK_LARGE), CEIL(h_const.dim[1], BLOCK_LARGE), CEIL(h_const.dim[2], THREAD_Z));
-	gpu_simple_stencil_kernel<<<grid_dim, block_dim>>>(d_const, d_q, d_flux);
 
+
+	struct timeval s, e;
+	gettimeofday(&s, NULL);
+
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+
+	cudaEventRecord(start, 0);
+	gpu_simple_stencil_kernel<<<grid_dim, block_dim>>>(d_const, d_q, d_flux);
+//	usleep<<<grid_dim, block_dim>>>();
+	cudaEventRecord(stop, 0);
+	cudaEventSynchronize(stop);
+
+	cudaThreadSynchronize();
+	gettimeofday(&e, NULL);
+
+	float elapsedTime;
+	cudaEventElapsedTime(&elapsedTime, start, stop);
+	printf("%lf vs %lf\n", elapsedTime, (double)(e.tv_sec-s.tv_sec) + 1.0E-6*(e.tv_usec-s.tv_usec));
+
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
 }
