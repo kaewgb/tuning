@@ -21,6 +21,8 @@ fmin = open('simple/min_'+suffix, 'a');
 favg = open('simple/avg_'+suffix, 'a');
 fmax = open('simple/max_'+suffix, 'a');
 
+processed = list();
+
 # Codegen
 for config in configs:
 
@@ -69,11 +71,11 @@ for config in configs:
 	print >>favg, config + '|' + string.join(map(str, res_avg), ',');
 	print >>fmax, config + '|' + string.join(map(str, res_max), ',');
 
-	count = count+1;
-	if count > 25:
-		cmd = ['rm', 'cache/*', 'run/*'];
+	processed.extend([target+'.cu', target+'.o', 'run/simple_'+config]);
+	if len(processed) >= (5*3)-1:
+		cmd = ['rm'] + processed;
 		syscall(cmd);
-
+		processed = [];
 
 fmin.close();
 favg.close();

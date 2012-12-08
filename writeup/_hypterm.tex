@@ -1,0 +1,54 @@
+\section{Hypterm}
+
+Hyperbolic Term. General description. What it computes.
+
+\subsection{The algorithm}
+\subsubsection{The Serial Algorithm}
+\begin{algorithm}
+\floatname{algorithm}{Algorithm}
+\caption{\textsc{Hypterm}}
+\label{alg:naive_allpairs}
+\begin{algorithmic}[1]
+\State Given: \emph{ $n$ particles divided evenly among $P$ processors}
+\State Compute forces between own particles
+\State Copy own particles to exchange buffer
+\For{$steps = 1\ \textbf{to}\ P-1$}
+	\State Send the exchange buffer to next neighbor
+	\State Compute forces between own particles and particles in the exchange buffer
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+\subsubsection{The GPU Algorithm}
+
+\subsection{Tuning Parameters}
+Parameters.
+% L1 supports reading 128-bit-aligned only
+
+\begin{tabular}{r c l}
+$block\_dim\_x$ & $\in$ & $\{4, 8, 16, 32, 64, 128,256\}$	\\
+$block\_dim\_y$ & $\in$ & $\{4, 8, 16, 32, 64, 128,256\}$	\\
+$thread\_z$     & $\in$ & $\{4, 8, 16, 32, 64\}$			\\
+$maxrregcount$  & $\in$ & $\{16, 20, 24, 28, 32\}$			\\
+$shared\_pad$   & $\in$ & $\{32, 128, 256\}$				\\
+$shared\_mem$   & $\in$ & $\{16, 48\}$						\\
+$bypass\_L1$    & $\in$ & $\{0, 1\}$						\\
+\end{tabular}
+
+\setlist{nolistsep}
+\begin{enumerate}
+\item[] $block\_dim\_x \in \{4, 8, 16, 32, 64, 128,256\}$
+\item[] $block\_dim\_y \in \{4, 8, 16, 32, 64, 128,256\}$
+\item[] $thread\_z \in \{4, 8, 16, 32, 64\}$
+\item[] $maxrregcount \in \{8, 16, 20, 24, 28, 32, 64\}$
+\item[] $global\_pad \in \{32, 128, 256\}$
+\item[] $shared\_pad \in \{32, 128, 256\}$
+\item[] $more\_smem \in \{0, 1\}$
+\item[] $bypass\_L1 \in \{0, 1\}$
+\end{enumerate}
+
+
+
+\subsection{Performance Results}
+\subsubsection{Boosted Regression Trees}
+\subsubsection{Detailed Model}
+

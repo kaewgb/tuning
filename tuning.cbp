@@ -40,11 +40,15 @@
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
 		<Unit filename="dummy.conf" />
-		<Unit filename="dummy.py" />
+		<Unit filename="dummy.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="genone.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="gentest.py" />
+		<Unit filename="gentest.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="gentwo.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
@@ -66,10 +70,14 @@
 		<Unit filename="run.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
+		<Unit filename="shuffle.py" />
 		<Unit filename="simple.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
 		<Unit filename="simple.mako" />
+		<Unit filename="splitwork.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="test.cu" />
 		<Unit filename="twopasses.cu">
 			<Option virtualFolder="CUDA Sources/" />

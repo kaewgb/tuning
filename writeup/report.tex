@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{comment}
+\usepackage{amssymb,amsmath}
+\usepackage{floatrow}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{program}
+\usepackage{color}
+\usepackage{enumitem}
+%\setlist{nolistsep}
+
+\algblockdefx[ForEach]{ForEach}{EndFor} %
+	[1]{\textbf{for each} $#1$ \textbf{do}} %
+	[0]{\textbf{end for}}
+
+\algblockdefx[ForEachIn]{ForEachIn}{EndFor} %
+	[2]{\textbf{for each} $#1$ \textbf{in} $#2$ \textbf{do}} %
+	[0]{\textbf{end for}}
+
+\floatsetup{
+  heightadjust=object,
+  valign=t
+}
+
+\algloopdefx{SingleIf}[1]{\textbf{if} \textsl{#1} \textbf{then}}
+\algnewcommand\algorithmicin{\textbf{in}}
+
+\title{EECS281A Fall 2012 Final Project: \\ Modeling Stencil Computation Performance on GPGPU}
+
+\author{Penporn Koanantakool}
+
+\begin{document}
+\maketitle
+
+\input{_intro}
+
+\input{_background}
+
+\input{_hypterm}
+
+\pagebreak
+\input{_conclusion}
+
+%\bibliographystyle{abbrv}
+%\bibliography{references}
+
+\end{document}
