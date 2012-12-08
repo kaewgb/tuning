@@ -16,7 +16,7 @@ ranges = map(lambda x: (x*lines_per_file, (x+1)*lines_per_file), range(0,int(mat
 count=1;
 for r in ranges:
 	filename = sys.argv[1].split('.')[0]+'_'+str(count);
-	with open('simple/'+filename+'.conf', 'w') as fout:
+	with open('confs/'+filename+'.conf', 'w') as fout:
 		for i in range(max(0, r[0]), min(len(lines),r[1])):
 			print >>fout, lines[i],
 

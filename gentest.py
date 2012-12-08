@@ -15,8 +15,8 @@ with open(sys.argv[1], 'r') as config_file:
 obj_files = ['test.o', 'util.o', 'util_cpu.o'];
 nvcc_flags = ['-arch=sm_20', '--fmad=false', '--ptxas-options=-v', '--disable-warnings'];
 
-suffix = sys.argv[1].split('.')[0];
-suffix = suffix.split('/')[-1];
+suffix = sys.argv[1].split('.')[0];		# Remove trailing file extension
+suffix = suffix.split('/')[-1];			# Remove preceding directory path
 fmin = open('simple/min_'+suffix, 'a');
 favg = open('simple/avg_'+suffix, 'a');
 fmax = open('simple/max_'+suffix, 'a');
