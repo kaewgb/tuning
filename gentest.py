@@ -15,9 +15,10 @@ with open(sys.argv[1], 'r') as config_file:
 obj_files = ['test.o', 'util.o', 'util_cpu.o'];
 nvcc_flags = ['-arch=sm_20', '--fmad=false', '--ptxas-options=-v', '--disable-warnings'];
 
-fmin = open('simple/min', 'a');
-favg = open('simple/avg', 'a');
-fmax = open('simple/max', 'a');
+suffix = sys.argv[1].split('.')[0];
+fmin = open('simple/min_'+suffix, 'a');
+favg = open('simple/avg_'+suffix, 'a');
+fmax = open('simple/max_'+suffix, 'a');
 
 # Codegen
 for config in configs:
@@ -57,7 +58,7 @@ for config in configs:
 	syscall(cmd);
 
 	# Run the program
-	cmd = ['run/simple_'+config, '128'];
+	cmd = ['run/simple_'+config, '64'];
 	syscall(cmd);
 
 	# Collect the profiling results

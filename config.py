@@ -3,14 +3,14 @@ def ceiling(x, y):
 	return (x+y-1)/y*y;
 
 block_dim_choices 	= [4, 8, 16, 32, 64, 128, 256];
-thread_z_choices 	= [4, 8, 16, 32, 64, 128];
+thread_z_choices 	= [4, 8, 16, 32, 64];
 maxrreg_choices		= [16, 20, 24, 28, 32];
 pad_choices			= [32, 128, 256];
 smem_choices		= [16, 48];
 bypass_l1_choices	= [0, 1];
 
 ng = 4;
-global_pad = 128;
+global_pad = 256;
 
 for block_dim_x in block_dim_choices:
 	for block_dim_y in block_dim_choices:
