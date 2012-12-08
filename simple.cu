@@ -118,12 +118,12 @@ void gpu_simple_stencil(
 
 
 	struct timeval s, e;
-	gettimeofday(&s, NULL);
 
 	cudaEvent_t start, stop;
 	cudaEventCreate(&start);
 	cudaEventCreate(&stop);
 
+	gettimeofday(&s, NULL);
 	cudaEventRecord(start, 0);
 	gpu_simple_stencil_kernel<<<grid_dim, block_dim>>>(d_const, d_q, d_flux);
 //	usleep<<<grid_dim, block_dim>>>();
