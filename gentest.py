@@ -16,6 +16,7 @@ obj_files = ['test.o', 'util.o', 'util_cpu.o'];
 nvcc_flags = ['-arch=sm_20', '--fmad=false', '--ptxas-options=-v', '--disable-warnings'];
 
 suffix = sys.argv[1].split('.')[0];
+suffix = suffix.split('/')[-1];
 fmin = open('simple/min_'+suffix, 'a');
 favg = open('simple/avg_'+suffix, 'a');
 fmax = open('simple/max_'+suffix, 'a');
