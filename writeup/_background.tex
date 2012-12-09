@@ -1,10 +1,50 @@
 \section{Background}
-\subsection{Stencil Computation}
-What is stencil computation?
-In this project I focus on 25-point stencil.
+In this section, we start with formal definitions of auto-tuning and stencil computation, followed by a brief introduction to GPU architecture and its programming model. Then we end the section with details on selected algorithms, which are known to work with auto-tuning.
 
-\subsection{GPU}
-CUDA architecture blah blah
+\subsection{Auto-tuning}
+Given a program with n tunable parameters, we call a tuple of values $(x_1, ..., x_n)$ corresponding to each parameter a $configuration$. The set of all possible configurations is called a $parameter space$ or $search space$. Auto-tuning  is the problem of finding the configuration that gives the best performance. Although the performance metric can be any values of interest, most tunings' metric is the running time (lowest is best), and so do this project.
+
+There are various approaches to auto-tuning. Of course the most naive one would be to actually run the application for all possible configurations and pick the best results. Unfortunately, the search space is often too large for this approach to be feasible. These approaches could be classified into 3 broad categories \cite{inpar}: model-driven optimization, empirical optimization and predictive optimization.
+
+\textbf{Model-based optimization} involves analytically constructing a performance model specific to the underlying hardware and does code transformation accordingly. However, such models are generally difficult to build. \textbf{Empirical optimization} searches for the best configuration by picking one initial configuration, generating code, benchmarking them on the actual hardware, determining the next configuration to be tested and repeat the whole process until an end condition is satisfied. It takes considerably more time than the model-based optimization and its performance depends heavily on the search method. There is a tradeoff between faster running time and more accuracy. \textbf{Predictive optimization} combines the first to approaches, enhancing the empirical optimization modeling/predicting the running time instead of actually running time. In this project we will use this approach and use machine learning algorithms for the prediction part.
+
+\subsection{Stencil Computation}
+Stencil computation is used in wide range applications from solving system of Partial Differential Equations (PDEs) to filtering in image processing. It iterates over timesteps and performs stencil operations on all points in a grid in each iteration. Stencil operation on a point updates its value to a linear combination of its nearest neighbors, within a fixed distance, and sometimes itself. An example 3D 25-point stencil is shown in Figure~\ref{fig:25-point_stencil}. We will use this stencil in our benchmark application.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{./images/NaiveAllpairs-algorithm.pdf}
+\caption{Illustration of a 3D 25-point stencil (4 neighbors in each direction).}
+\label{fig:25-point_stencil}
+\end{figure}
+
+Stencil computation is mostly bandwidth-bound, since they rely on many points around while the computation is trivial.
+
+\subsection{NVIDIA GPU and CUDA Programming Model}
+GPU (Graphical Processing Unit) is a massively parallel processor that was originally designed for just display purpose. With the introduction of programming frameworks that allows programmers to program general-purpose application on GPUs more conveniently, graphic cards quickly became one of the most popular hardware accelerators nowadays. Among all vendors, NVIDIA GPUs are the most popular and widely available.
+
+Figure \ref{fig:gpu-arch} shows the architecture of an NVIDIA GPU. An NVIDIA GPU consists of many SIMD (Single Instruction Multiple Data) cores, dubbed Streaming Multiprocessors, and its own high-bandwidth DRAM memory. Each core has a large register file and a user-managed cache called \textbf{shared memory}. There are three types of out-of-core memory: global memory, constant memory, and texture memory. Global memory is the largest one and is used in general purpose. The latter two are read-only.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{./images/NaiveAllpairs-algorithm.pdf}
+\caption{Illustration of a 3D 25-point stencil (4 neighbors in each direction).}
+\label{fig:25-point_stencil}
+\end{figure}
+
+The programming model for NVIDIA GPUs is called CUDA (Compute Unified Device Architecture). To program on a GPU, one needs to write a normal CPU $"host"$ code that calls a separate CUDA $"kernel"$\footnote{Not to be confused with kernels in Statistics} code, which is simply a function to be executed simultaneously on GPU cores.
+
+A set of all threads that is used to execute a kernel is referred to as a "grid" in CUDA context. For each grid, the threads are divided into groups called thread blocks (for scalability reasons ..cite CUDA Programmming Handbook). Threads in the same block will be executed on the same GPU core, and will be able to share resources and synchronize. The block size affects the resources usage on a core and determines how many threads will be able to execute on the whole GPU device in total, and thus it is one of the most important tuning parameters of a GPU program.
+
+Given that a stencil computation is bandwidth bound, the keys to optimize it are simply
+\begin{enumerate}
+	\item Optimizing for highest memory bandwidth by
+		\begin{enumerate}
+			\item Coalescing memory reads from global memory.
+			\item Design load and store pattern to minimize extra reads from global memory. For example, use shared memory to share data among threads in the same block, and order the usage pattern so that we don't need to load the same data again later in the computation.
+		\end{enumerate}
+	\item Utilizing as many computing resources as possible
+\end{enumerate}
 
 \subsection{Machine Learning in Auto-tuning}
 Boosted Regression Tree

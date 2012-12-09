@@ -54,11 +54,11 @@ int main(int argc, char *argv[]){
 	printf("Total time: %lf\n", total_time);
 
 
-	fout = fopen("output", "w");
-	fprintf(fout, "%d\n", h_const.nc);
-	fprintf(fout, "%d %d %d\n", h_const.dim_g[0], h_const.dim_g[1], h_const.dim_g[2]);
-	print_4D(fout, U, h_const.dim_g, h_const.nc);
-	fclose(fout);
+//	fout = fopen("output", "w");
+//	fprintf(fout, "%d\n", h_const.nc);
+//	fprintf(fout, "%d %d %d\n", h_const.dim_g[0], h_const.dim_g[1], h_const.dim_g[2]);
+//	print_4D(fout, U, h_const.dim_g, h_const.nc);
+//	fclose(fout);
 
 	//!
 	//!	Free Allocations

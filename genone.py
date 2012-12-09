@@ -77,6 +77,14 @@ for config in configs:
 		syscall(cmd);
 		processed = [];
 
+		#flush files
+		fmin.flush();
+		favg.flush();
+		fmax.flush();
+		os.fsync(fmin.fileno());
+		os.fsync(favg.fileno());
+		os.fsync(fmax.fileno());
+
 fmin.close();
 favg.close();
 fmax.close();
