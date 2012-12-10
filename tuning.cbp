@@ -36,13 +36,12 @@
 		<Unit filename="collect.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="complicated.cu">
-			<Option virtualFolder="CUDA Sources/" />
-		</Unit>
 		<Unit filename="config.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="config_one.py" />
+		<Unit filename="config_one.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="dummy.conf" />
 		<Unit filename="dummy.py">
 			<Option virtualFolder="Python Scripts/" />
@@ -56,7 +55,6 @@
 		<Unit filename="gentwo.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="gradientboost.py" />
 		<Unit filename="header.h" />
 		<Unit filename="hypterm2.cu">
 			<Option virtualFolder="CUDA Sources/" />
@@ -76,6 +74,9 @@
 		<Unit filename="job.mako">
 			<Option virtualFolder="Mako Templates/" />
 		</Unit>
+		<Unit filename="matchlines.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="onepass.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
@@ -86,6 +87,9 @@
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
 		<Unit filename="run.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
+		<Unit filename="scikit_wrapper.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
 		<Unit filename="shuffle.py">
@@ -100,7 +104,9 @@
 		<Unit filename="splitwork.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="test.cu" />
+		<Unit filename="test.cu">
+			<Option virtualFolder="CUDA Sources/" />
+		</Unit>
 		<Unit filename="twopasses.cu">
 			<Option virtualFolder="CUDA Sources/" />
 		</Unit>
@@ -110,6 +116,12 @@
 		<Unit filename="util.h" />
 		<Unit filename="util_cpu.cpp" />
 		<Unit filename="util_cpu.h" />
+		<Unit filename="writeup/_background.tex" />
+		<Unit filename="writeup/_conclusion.tex" />
+		<Unit filename="writeup/_hypterm.tex" />
+		<Unit filename="writeup/_intro.tex" />
+		<Unit filename="writeup/_related.tex" />
+		<Unit filename="writeup/report.tex" />
 		<Extensions>
 			<code_completion />
 			<debugger />

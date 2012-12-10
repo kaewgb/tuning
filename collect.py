@@ -1,7 +1,8 @@
 import sys, re, string
 from regression import *
-from gradientboost import *
+from scikit_wrapper import *
 from sklearn.metrics import mean_squared_error
+
 
 def db_to_x_y(db):
 	x = map(lambda r: r[:-1], db);
@@ -31,25 +32,40 @@ print 'total: %d, ntrain: %d, num_parts: %d'%(len(db), ntrain, len(db)/ntrain);
 
 gbst = do_gradient_boost(x, y, train_idcs[0]);
 gbst_avg = do_gradient_boost(x, y, train_idcs[0]);
-for train_idx in train_idcs[1:]:
-	temp = do_gradient_boost(x, y, train_idx);
-	gbst_avg = map(lambda (x, y): x+y, zip(gbst_avg, temp));
+#for train_idx in train_idcs[1:]:
+#	temp = do_gradient_boost(x, y, train_idx);
+#	gbst_avg = map(lambda (x, y): x+y, zip(gbst_avg, temp));
+#
+#gbst_avg = map(lambda x: x/len(train_idcs), gbst_avg);
 
-gbst_avg = map(lambda x: x/len(train_idcs), gbst_avg);
-sorted_list = zip(x, y, gbst, gbst_avg);
+svm = do_svm(x, y, train_idcs[0]);
+svm_avg = do_svm(x, y, train_idcs[0]);
+#for train_idx in train_idcs[1:]:
+#	temp = do_svm(x, y, train_idx);
+#	svm_avg = map(lambda (x, y): x+y, zip(svm_avg, temp));
+#
+#svm_avg = map(lambda x: x/len(train_idcs), svm_avg);
+
+sorted_list = zip(x, y, gbst, gbst_avg, svm, svm_avg);
 to_be_sorted = zip(y, sorted_list);
 to_be_sorted.sort();
 dummy, sorted_list = zip(*to_be_sorted);
 
-with open('onepass/data.dat', 'w') as fout:
-	for (X, Y, G, Gavg) in sorted_list:
-		print >>fout, string.join(map(lambda i: str(i), X), '\t')+'\t%lf\t%lf\t%lf'%(Y, G, Gavg);
+with open('data.dat', 'w') as fout:
+	for (xval, yval, g, gavg, s, savg) in sorted_list:
+		print >>fout, string.join(map(lambda i: str(i), xval), '\t')+'\t%lf\t%lf\t%lf\t%lf\t%lf'%(yval, g, gavg, s, savg);
 
-print 'Meansqr\n', mean_squared_error(y, gbst);
-print mean_squared_error(y, gbst_avg);
-improvement = mean_squared_error(y, gbst) - mean_squared_error(y, gbst_avg);
+#print 'Meansqr\n', mean_squared_error(y, gbst);
+#print mean_squared_error(y, gbst_avg);
+#improvement = mean_squared_error(y, gbst) - mean_squared_error(y, gbst_avg);
+#print 'improved = ', improvement;
+#print 'percent = ', improvement/mean_squared_error(y, gbst) * 100;
+
+print 'Meansqr\n', mean_squared_error(y, svm);
+print mean_squared_error(y, svm_avg);
+improvement = mean_squared_error(y, svm) - mean_squared_error(y, svm_avg);
 print 'improved = ', improvement;
-print 'percent = ', improvement/mean_squared_error(y, gbst) * 100;
+print 'percent = ', improvement/mean_squared_error(y, svm) * 100;
 
 #splitting_conds = simple_gen_splitting_conditions();
 #build_regression_tree(db, splitting_conds, 0, 1);

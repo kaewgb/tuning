@@ -2,11 +2,14 @@
 In this section, we start with formal definitions of auto-tuning and stencil computation, followed by a brief introduction to GPU architecture and its programming model. Then we end the section with details on selected algorithms, which are known to work with auto-tuning.
 
 \subsection{Auto-tuning}
-Given a program with n tunable parameters, we call a tuple of values $(x_1, ..., x_n)$ corresponding to each parameter a $configuration$. The set of all possible configurations is called a $parameter space$ or $search space$. Auto-tuning  is the problem of finding the configuration that gives the best performance. Although the performance metric can be any values of interest, most tunings' metric is the running time (lowest is best), and so do this project.
+Given a program with n tunable parameters, we call a tuple of values $(x_1, ..., x_n)$ corresponding to each parameter a \emph{configuration}. The set of all possible configurations is called a \emph{parameter space} or \emph{search space}. Auto-tuning  is the problem of finding the configuration that gives the best performance. Although the performance metric can be any values of interest, most tunings' metric is the running time (lowest is best), and so do this project.
 
-There are various approaches to auto-tuning. Of course the most naive one would be to actually run the application for all possible configurations and pick the best results. Unfortunately, the search space is often too large for this approach to be feasible. These approaches could be classified into 3 broad categories \cite{inpar}: model-driven optimization, empirical optimization and predictive optimization.
-
-\textbf{Model-based optimization} involves analytically constructing a performance model specific to the underlying hardware and does code transformation accordingly. However, such models are generally difficult to build. \textbf{Empirical optimization} searches for the best configuration by picking one initial configuration, generating code, benchmarking them on the actual hardware, determining the next configuration to be tested and repeat the whole process until an end condition is satisfied. It takes considerably more time than the model-based optimization and its performance depends heavily on the search method. There is a tradeoff between faster running time and more accuracy. \textbf{Predictive optimization} combines the first to approaches, enhancing the empirical optimization modeling/predicting the running time instead of actually running time. In this project we will use this approach and use machine learning algorithms for the prediction part.
+There are various approaches to auto-tuning. Of course the most na\"{i}ve one would be to actually run the application for all possible configurations and pick the best results. Unfortunately, the search space is often too large for this approach to be feasible. These approaches could be classified into 3 broad categories \cite{inpar2012}:
+\begin{description}
+	\item[Model-based optimization] involves analytically constructing a performance model specific to the underlying hardware and does code transformation accordingly. However, such models are generally difficult to build.
+	\item[Empirical optimization] searches for the best configuration by picking one initial configuration, generating code, benchmarking them on the actual hardware, determining the next configuration to be tested and repeat the whole process until an end condition is satisfied. It takes considerably more time than the model-based optimization and its performance depends heavily on the search method. There is a tradeoff between faster running time and more accuracy.
+	\item[Predictive optimization] combines the first to approaches, enhancing the empirical optimization modeling/predicting the running time instead of actually running time. In this project we will use this approach and use machine learning algorithms for the prediction part.
+\end{description}
 
 \subsection{Stencil Computation}
 Stencil computation is used in wide range applications from solving system of Partial Differential Equations (PDEs) to filtering in image processing. It iterates over timesteps and performs stencil operations on all points in a grid in each iteration. Stencil operation on a point updates its value to a linear combination of its nearest neighbors, within a fixed distance, and sometimes itself. An example 3D 25-point stencil is shown in Figure~\ref{fig:25-point_stencil}. We will use this stencil in our benchmark application.
@@ -28,13 +31,13 @@ Figure \ref{fig:gpu-arch} shows the architecture of an NVIDIA GPU. An NVIDIA GPU
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{./images/NaiveAllpairs-algorithm.pdf}
-\caption{Illustration of a 3D 25-point stencil (4 neighbors in each direction).}
-\label{fig:25-point_stencil}
+\caption{NVIDIA GPU architecture}
+\label{fig:gpu-arch}
 \end{figure}
 
-The programming model for NVIDIA GPUs is called CUDA (Compute Unified Device Architecture). To program on a GPU, one needs to write a normal CPU $"host"$ code that calls a separate CUDA $"kernel"$\footnote{Not to be confused with kernels in Statistics} code, which is simply a function to be executed simultaneously on GPU cores.
+The programming model for NVIDIA GPUs is called CUDA (Compute Unified Device Architecture). To program on a GPU, one needs to write a normal CPU \emph{`host'} code that calls a separate CUDA \emph{`kernel'}\footnote{Not to be confused with kernels in Statistics} code, which is simply a function to be executed simultaneously on GPU cores.
 
-A set of all threads that is used to execute a kernel is referred to as a "grid" in CUDA context. For each grid, the threads are divided into groups called thread blocks (for scalability reasons ..cite CUDA Programmming Handbook). Threads in the same block will be executed on the same GPU core, and will be able to share resources and synchronize. The block size affects the resources usage on a core and determines how many threads will be able to execute on the whole GPU device in total, and thus it is one of the most important tuning parameters of a GPU program.
+A set of all threads that is used to execute a kernel is referred to as a ``grid" in CUDA context. For each grid, the threads are divided into groups called thread blocks (for scalability reasons ..cite CUDA Programmming Handbook). Threads in the same block will be executed on the same GPU core, and will be able to share resources and synchronize. The block size affects the resources usage on a core and determines how many threads will be able to execute on the whole GPU device in total, and thus it is one of the most important tuning parameters of a GPU program.
 
 Given that a stencil computation is bandwidth bound, the keys to optimize it are simply
 \begin{enumerate}
@@ -46,9 +49,10 @@ Given that a stencil computation is bandwidth bound, the keys to optimize it are
 	\item Utilizing as many computing resources as possible
 \end{enumerate}
 
-\subsection{Machine Learning in Auto-tuning}
-Boosted Regression Tree
+\subsection{Machine Learning in Auto-tuning Stencil Computation}
+There are several auto-tuning researches on stencil computation on GPUs, but they don't utilize Machine Learning. Datta et al.\ and Kamil et al.\ explained a thorough framework to auto-tune stencil computation on various multicore architectures including NVIDIA GPUs. They used empirical optimization with iterative greedy search algorithm with heuristics. \cite{datta08, datta09, shoaib10} Zhang and Mueller recently explores auto-tuning of 3D stencil computatoin exclusively on GPUs, including GPU clusters. They exhaustively tested all configurations. \cite{zhang12}
 
-KCCA (Kernel Canonical Correlation Analysis)
+In fact, there are few auto-tuning project on GPU that uses machine learning. To be appear in the inaugural Innovative Parallel Computing (InPar) 2012 is a work on predictive auto-tuning on GPU by Bergstra et al.\ \cite{inpar2012} They used Boosted Regression Tree (BST) to predict program's performance and used hill-climbing (HC) search algorithm to find the best configuration. Their benchmark application was a simple spatial image filter called Filterbank correlation. They found that the predicted running times correlate very well with the results from their actual runs across 5 models of NVIDIA GPUs. They also asserted that the auto-tuning should be input-dependent, that is choosing kernels according to each input configuration.
 
-Amik's model
+% Add KCCA if I can use it..
+% Add amik paper if end up using analytic model
