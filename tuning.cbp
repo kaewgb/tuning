@@ -43,9 +43,6 @@
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
 		<Unit filename="dummy.conf" />
-		<Unit filename="dummy.py">
-			<Option virtualFolder="Python Scripts/" />
-		</Unit>
 		<Unit filename="genone.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>

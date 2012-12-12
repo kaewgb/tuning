@@ -1,5 +1,5 @@
 import numpy as mp
-import StringIO, pydot
+import cStringIO, pydot, string
 from sklearn import svm
 from sklearn import tree
 from sklearn.ensemble import GradientBoostingRegressor
@@ -18,6 +18,8 @@ def do_gradient_boost(x, y, train_idx):
 			loss='ls');
 
 	clf.fit(x_train, y_train);
+
+	print clf.trees
 
 	return clf.predict(x);
 
@@ -43,6 +45,20 @@ def do_svm(x, y, train_idx):
 
 	return clf.predict(x);
 
+def print_trees(trees):
+	count = 0;
+	labels = ['blockDim.x', 'blockDim.y', 'thread_z', 'maxrregcount', 'shared_pad', 'shared_mem', 'bypass_L1'];
+
+	for t in trees:
+		dot_data = cStringIO.StringIO();
+		tree.export_graphviz(t, out_file=dot_data);
+		dot_data_string = dot_data.getvalue();
+		for i in range(0, 7):
+			dot_data_string = string.replace(dot_data_string, 'X[%d]'%i, labels[i]);
+		graph = pydot.graph_from_dot_data(dot_data_string);
+		graph.write_pdf("tree%d.pdf"%count);
+		count = count+1;
+
 def do_random_forest(x, y, train_idx):
 
 	x_train = x[train_idx[0]:train_idx[1]];
@@ -50,6 +66,8 @@ def do_random_forest(x, y, train_idx):
 
 	clf = RandomForestRegressor();
 	clf.fit(x_train, y_train);
+
+	print_trees(clf.estimators_);
 
 	return clf.predict(x);
 
@@ -59,10 +77,5 @@ def do_regression_tree(x, y, train_idx):
 
 	clf = tree.DecisionTreeRegressor();
 	clf = clf.fit(x_train, y_train);
-
-	dot_data = StringIO.StringIO()
-	tree.export_graphviz(clf, out_file=dot_data);
-	graph = pydot.graph_from_dot_data(dot_data.getvalue());
-	graph.write_pdf("sth.pdf");
 
 	return clf.predict(x);
