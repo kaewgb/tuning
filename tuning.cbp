@@ -55,6 +55,7 @@
 		<Unit filename="gentwo.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
+		<Unit filename="hc.py" />
 		<Unit filename="header.h" />
 		<Unit filename="hypterm2.cu">
 			<Option virtualFolder="CUDA Sources/" />
@@ -86,6 +87,7 @@
 		<Unit filename="regression.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
+		<Unit filename="reorder.py" />
 		<Unit filename="run.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
@@ -116,11 +118,13 @@
 		<Unit filename="util.h" />
 		<Unit filename="util_cpu.cpp" />
 		<Unit filename="util_cpu.h" />
+		<Unit filename="writeup/_algo.tex" />
 		<Unit filename="writeup/_background.tex" />
 		<Unit filename="writeup/_conclusion.tex" />
-		<Unit filename="writeup/_hypterm.tex" />
 		<Unit filename="writeup/_intro.tex" />
-		<Unit filename="writeup/_related.tex" />
+		<Unit filename="writeup/_results.tex" />
+		<Unit filename="writeup/_setup.tex" />
+		<Unit filename="writeup/references.bib" />
 		<Unit filename="writeup/report.tex" />
 		<Extensions>
 			<code_completion />

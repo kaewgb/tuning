@@ -12,14 +12,14 @@ There are various approaches to auto-tuning. Of course the most na\"{i}ve one wo
 \end{description}
 
 \subsection{Stencil Computation}
-Stencil computation is used in wide range applications from solving system of Partial Differential Equations (PDEs) to filtering in image processing. It iterates over timesteps and performs stencil operations on all points in a grid in each iteration. Stencil operation on a point updates its value to a linear combination of its nearest neighbors, within a fixed distance, and sometimes itself. An example 3D 25-point stencil is shown in Figure~\ref{fig:25-point_stencil}. We will use this stencil in our benchmark application.
+Stencil computation is used in wide range applications from solving system of Partial Differential Equations (PDEs) to filtering in image processing. It iterates over timesteps and performs stencil operations on all points in a grid in each iteration. Stencil operation on a point updates its value to a linear combination\footnote{In other words, weighted sum} of its nearest neighbors, within a fixed distance, and sometimes itself. An example 3D 25-point stencil is shown in Figure~\ref{fig:25-point_stencil}. We will use this stencil in our benchmark application.
 
-\begin{figure}
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.8\textwidth]{./images/NaiveAllpairs-algorithm.pdf}
-\caption{Illustration of a 3D 25-point stencil (4 neighbors in each direction).}
+\includegraphics[width=0.25\textwidth]{./images/25-point-stencil.pdf}
+\caption{Illustration of a 3D 25-point stencil (4 neighbors in each direction). (Courtesy of NVIDIA)}
 \label{fig:25-point_stencil}
-\end{figure}
+\end{figure*}
 
 Stencil computation is mostly bandwidth-bound, since they rely on many points around while the computation is trivial.
 
@@ -28,12 +28,12 @@ GPU (Graphical Processing Unit) is a massively parallel processor that was origi
 
 Figure \ref{fig:gpu-arch} shows the architecture of an NVIDIA GPU. An NVIDIA GPU consists of many SIMD (Single Instruction Multiple Data) cores, dubbed Streaming Multiprocessors, and its own high-bandwidth DRAM memory. Each core has a large register file and a user-managed cache called \textbf{shared memory}. There are three types of out-of-core memory: global memory, constant memory, and texture memory. Global memory is the largest one and is used in general purpose. The latter two are read-only.
 
-\begin{figure}
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.8\textwidth]{./images/NaiveAllpairs-algorithm.pdf}
-\caption{NVIDIA GPU architecture}
+\includegraphics[width=0.25\textwidth]{./images/gpu-architecture.pdf}
+\caption{NVIDIA GPU architecture (Courtesy of NVIDIA)}
 \label{fig:gpu-arch}
-\end{figure}
+\end{figure*}
 
 The programming model for NVIDIA GPUs is called CUDA (Compute Unified Device Architecture). To program on a GPU, one needs to write a normal CPU \emph{`host'} code that calls a separate CUDA \emph{`kernel'}\footnote{Not to be confused with kernels in Statistics} code, which is simply a function to be executed simultaneously on GPU cores.
 
@@ -50,9 +50,20 @@ Given that a stencil computation is bandwidth bound, the keys to optimize it are
 \end{enumerate}
 
 \subsection{Machine Learning in Auto-tuning Stencil Computation}
-There are several auto-tuning researches on stencil computation on GPUs, but they don't utilize Machine Learning. Datta et al.\ and Kamil et al.\ explained a thorough framework to auto-tune stencil computation on various multicore architectures including NVIDIA GPUs. They used empirical optimization with iterative greedy search algorithm with heuristics. \cite{datta08, datta09, shoaib10} Zhang and Mueller recently explores auto-tuning of 3D stencil computatoin exclusively on GPUs, including GPU clusters. They exhaustively tested all configurations. \cite{zhang12}
+There are several auto-tuning researches on stencil computation on GPUs, but they don't utilize Machine Learning. Datta et al.\ and Kamil et al.\ explained a thorough framework to auto-tune stencil computation on various multicore architectures including NVIDIA GPUs. They used empirical optimization with iterative greedy search algorithm with heuristics. \cite{datta08, datta09, shoaib10} Zhang and Mueller recently explored auto-tuning of 3D stencil computatoin exclusively on GPUs, including GPU clusters. They exhaustively tested all configurations. \cite{zhang12}
 
-In fact, there are few auto-tuning project on GPU that uses machine learning. To be appear in the inaugural Innovative Parallel Computing (InPar) 2012 is a work on predictive auto-tuning on GPU by Bergstra et al.\ \cite{inpar2012} They used Boosted Regression Tree (BST) to predict program's performance and used hill-climbing (HC) search algorithm to find the best configuration. Their benchmark application was a simple spatial image filter called Filterbank correlation. They found that the predicted running times correlate very well with the results from their actual runs across 5 models of NVIDIA GPUs. They also asserted that the auto-tuning should be input-dependent, that is choosing kernels according to each input configuration.
+In fact, there are few auto-tuning project on GPU that even uses machine learning. To be appear in the inaugural Innovative Parallel Computing (InPar) 2012 is a work on predictive auto-tuning on GPU by Bergstra et al.\ \cite{inpar2012} They used Boosted Regression Tree (BST) to predict program's performance and used hill-climbing (HC) search algorithm to find the best configuration. Their benchmark application was a simple spatial image filter called Filterbank correlation. They found that the predicted running times correlate very well with the results from their actual runs across 5 models of NVIDIA GPUs. They also asserted that the auto-tuning should be input-dependent, that is choosing kernels according to each input configuration.
+
+Ganapathi et al.\ took an interesting approach in tuning stencil computation on multicore architectures, although GPU was not included. \cite{KCCA} Having set the desired performance metrics to be both energy and speed, she opted for a rather compute-intensive machine learning algorithm called Kernel Canonical Correlation Analysis (KCCA). The key idea is to project the set of configurations and the set of measured corresponding metrics onto a space that they correlate the most, and then project the best configuration of the test set onto that space, find nearest neighbors in the projected space, and then generate new (much smaller) set of configuration to be searched empirically for the best parameter. The performance the auto-tuning was able to achieve is within 1\% of and up to 18\% better than a human expert.
+
+Observing that the BRT and KCCA algorithms perform well, I chose to study 2 regression tree algorithms and 2 kernel algorithms: (Gradient) Boosted Regression Tree, Random Forest, Kernel Ridge Regression, and Kernel Canonical Correlation Analysis.
+\begin{description}
+\item[Regression Trees] Regression Trees predict by recursively dividing input space to constant region. They are interesting to auto-tuning because they are non-parametric. That is, they don't need to know the probability distribution of the latent variable. Apart from quick decision time, the splitting condition can help in learning what parameters is crucial in tuning, which is always good to know regardless of how obvious they are. However, they do have drawbacks. Regression trees have high variance since each different decision at the splitting node can lead to totally different conditions later on down the tree. However, this can be avoided by additive algorithms. \emph{Boosted Regression Tree} is a committee-based algorithm that tries to create a strong learner from multiple weak learners. It iteratively combines regression trees from learning samples that are weighted so that the ones that were previously classified wrong has more weight (Learning from mistakes). \emph{Random Forest} is another way by combining random trees together.
+\item[Kernel Canonical Correlation Analysis] is a kernelized version of Canonical Correlation Analysis.\cite{KICA} It is similar to PCA in essence. The algorithm is previously mentioned in last paragraph. The projection can be viewed as discovering the generating factors that lies behind two sets of data. For example, in auto-tuning configurations and observed running times are the two sets of data and the maximal correlation projection can be considered the projection of all deciding hardware and application constraints summarized in just one dimension. I'm very interested and intrigued by this. Thus, I include it here even though it seems to be an overkill for this problem. (Solving KCCA equals to solving generalized eigenvector problem, thus it has $O(n^3)$ complexity.)
+\item[Kernel Ridge Regression] I add this
+\end{description}
+
+
 
 % Add KCCA if I can use it..
 % Add amik paper if end up using analytic model

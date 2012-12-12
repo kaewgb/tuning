@@ -11,7 +11,7 @@ set style histogram rowstacked
 set style fill solid noborder
 set boxwidth 0.8
 set grid ytics mytics
-set size 1.0,0.4
+set size 1.2,0.5
 
 # Configure legends
 #set key font ",15"
@@ -22,10 +22,10 @@ set bmargin 3
 set offset 0,0,0,0
 
 # "hack"
-set xlabel "\t" font ",19" offset 0, -0.9
+set xlabel "Sample index" 
 
 # Make titles
-set title "Execution Time"
+set title "Measured vs Predicted Running time"
 set ylabel "Execution Time Per Timestep (usec)" offset 0.5, 0
 
 # output file
@@ -37,8 +37,7 @@ set output "$2"
 #     '' index 0 u (\$6!=0.000000?\$6:1/0) title "Communication (Reduce)"
 
 plot '$1' u 0:8 with boxes title "Measured", \
-	 '' u 0:11 with lines title "SVM", \
-	 '' u 0:12 with lines title "SVM, cross-validated"
+	 '' u 0:10 with lines title "BRT, cross-validated", \
+	 '' u 0:12 with lines title "Random Forest, cross-validated", \
+	 'krr_sorted.dat' u 0:8 with dots title "Kernel Ridge Regression"
 
-#	 '' u 0:9 with lines title "BRT", \
-#	 '' u 0:10 with lines title "BRT, cross-validated", \

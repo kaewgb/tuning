@@ -1,0 +1,6 @@
+\section{Experimental Setup}
+I ran all experiments on NVIDIA Tesla M2050 GPUs. Each of which equipped with 3GB global device memory with 85.65GB/s bandwidth in practice, measured by bandwidthTest tool in CUDA Toolkit 5.0.
+
+I limit training samples at 1000 samples to have reasonable amount to do cross-validation. I give all prediction algorithms the same training data to make it fair to compare.
+
+The Gradient Boosted Regression Tree, Random Forest algorithms, and Kernel Ridge Regression are used with Hill-Climbing algorithm to search for the best parameter. Kernel Canonical Correlation Analysis doesn't have a way to map nicely and directly from configuration to performance results so I did the projection into the space that maximizes correlation and used Genetic algorithm to find the best configuration as explained earlier. Kernels used in KRR and KCCA are Gaussian kernels.

@@ -4,13 +4,15 @@ SOURCES=				\
 	report.tex			\
 	_intro.tex			\
 	_background.tex 	\
-	_hypterm.tex		\
+	_algo.tex		\
+	_setup.tex		\
+	_results.tex		\
 	_conclusion.tex
 
 report.pdf: $(SOURCES)
-	latex $<
+	pdflatex $<
 	bibtex report
-	latex $<
+	pdflatex $<
 	pdflatex $<
 
 .PHONY:	clean
