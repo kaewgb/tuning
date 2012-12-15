@@ -1,6 +1,28 @@
 \section{Experimental Setup}
+\subsection{Hardware Specifications}
 I ran all experiments on NVIDIA Tesla M2050 GPUs. Each of which equipped with 3GB global device memory with 85.65GB/s bandwidth in practice, measured by bandwidthTest tool in CUDA Toolkit 5.0.
 
-I limit training samples at 1000 samples to have reasonable amount to do cross-validation. I give all prediction algorithms the same training data to make it fair to compare.
+\subsection{Tuning Methodology}
+First, I benchmark all the configurations, and randomly select 1,000 samples to be training samples for all the algorithms. Gradient Boosted Regression Tree, Random Forest, and Kernel Ridge Regression are used in tuning with 75 iterations of Hill-Climbing search algorithm shown in Algorithm \ref{alg:tuning-methodology}, with cross validation. Kernel Canonical Correlation Analysis is used in tuning the same way as described in Ganapathi et al.\'s. Kernels used in KRR and KCCA are Gaussian kernels.
 
-The Gradient Boosted Regression Tree, Random Forest algorithms, and Kernel Ridge Regression are used with Hill-Climbing algorithm to search for the best parameter. Kernel Canonical Correlation Analysis doesn't have a way to map nicely and directly from configuration to performance results so I did the projection into the space that maximizes correlation and used Genetic algorithm to find the best configuration as explained earlier. Kernels used in KRR and KCCA are Gaussian kernels.
+\begin{algorithm}
+\floatname{algorithm}{Algorithm}
+\caption{\textsc{Tuning Algorithm for GBRT, Random Forest, and KRR}}
+\label{alg:tuning-methodology}
+\begin{algorithmic}[1]
+\State \emph{Define \emph{predict(conf)}:} Running time of $conf$ predicted by the machine learning algorithm.
+\State \emph{Define \emph{get\_new\_conf(conf)}:} \emph{conf} with each parameter altered at random with probability 0.25.
+\State $conf \leftarrow (16,16,4,\infty,32,48,0)$
+\State $min \leftarrow \infty$
+\State $best\_conf \leftarrow conf$
+\For{$i=1$ to $75$}
+	\State $t \leftarrow predict(conf)$
+	\If{$t < min$}
+		\State $min \leftarrow t$
+		\State $best\_conf \leftarrow conf$
+	\EndIf
+	\State $conf \leftarrow get\_new\_conf(conf)$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+

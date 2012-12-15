@@ -1,21 +1,21 @@
 import sys, re, string, random
 
 # Simple
-#block_dim_choices 	= [4, 8, 16, 32, 64, 128, 256];
-#thread_z_choices 	= [4, 8, 16, 32, 64];
-#maxrreg_choices		= [16, 20, 24, 28, 32];
-#pad_choices			= [32, 128, 256];
-#smem_choices		= [16, 48];
-#bypass_l1_choices	= [0, 1];
-
-# Onepass
-block_dim_x_choices = [4, 8, 16, 32, 64, 128, 256];
-block_dim_y_choices = [4, 8, 16, 20, 24, 32, 40, 64, 80, 96, 128, 256];
-thread_z_choices 	= [4, 8, 16, 32, 48, 64];
-maxrreg_choices		= [32, 40, 48, 52, 64];
+block_dim_choices 	= [4, 8, 16, 32, 64, 128, 256];
+thread_z_choices 	= [4, 8, 16, 32, 64];
+maxrreg_choices		= [16, 20, 24, 28, 32];
 pad_choices			= [32, 128, 256];
 smem_choices		= [16, 48];
 bypass_l1_choices	= [0, 1];
+
+# Onepass
+#block_dim_x_choices = [4, 8, 16, 32, 64, 128, 256];
+#block_dim_y_choices = [4, 8, 16, 20, 24, 32, 40, 64, 80, 96, 128, 256];
+#thread_z_choices 	= [4, 8, 16, 32, 48, 64];
+#maxrreg_choices		= [32, 40, 48, 52, 64];
+#pad_choices			= [32, 128, 256];
+#smem_choices		= [16, 48];
+#bypass_l1_choices	= [0, 1];
 
 def db_to_lookup_db(db):
 	x = map(lambda r: r[:-1], db);
@@ -42,16 +42,16 @@ for filename in sys.argv[1:]:
 
 
 # Simple
-#choices = [block_dim_choices, block_dim_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
+choices = [block_dim_choices, block_dim_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
 # Onepass
-choices = [block_dim_x_choices, block_dim_y_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
+#choices = [block_dim_x_choices, block_dim_y_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
 
 random.seed();
 for i in range(0, 1000):
 	# Simple
-	#best_conf = [16, 16, 8, 32, 32, 48, 0];
+	best_conf = [16, 16, 8, 32, 32, 48, 0];
 	# Onepass
-	best_conf = [16, 16, 8, 64, 32, 48, 0];
+#	best_conf = [16, 16, 8, 64, 32, 48, 0];
 	ymin = lookup(best_conf, db);
 	#print ymin;
 

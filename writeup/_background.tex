@@ -1,18 +1,34 @@
 \section{Background}
-In this section, we start with formal definitions of auto-tuning and stencil computation, followed by a brief introduction to GPU architecture and its programming model. Then we end the section with details on selected algorithms, which are known to work with auto-tuning.
+We will start with formal definitions of auto-tuning and stencil computation, followed by a brief introduction to GPU architecture and its programming model. Then we end the section with details on selected algorithms.
 
 \subsection{Auto-tuning}
-Given a program with n tunable parameters, we call a tuple of values $(x_1, ..., x_n)$ corresponding to each parameter a \emph{configuration}. The set of all possible configurations is called a \emph{parameter space} or \emph{search space}. Auto-tuning  is the problem of finding the configuration that gives the best performance. Although the performance metric can be any values of interest, most tunings' metric is the running time (lowest is best), and so do this project.
+Given a program with n tunable parameters, we call a tuple of values $(x_1, ..., x_n)$ corresponding to each parameter a \emph{configuration}. The set of all possible configurations is called a \emph{parameter space} or \emph{search space}. Auto-tuning  is the problem of finding the configuration that gives the best performance. Although the performance metric can be any values of interest, the most common metric is the running time (lowest is best), and so do this project.
 
-There are various approaches to auto-tuning. Of course the most na\"{i}ve one would be to actually run the application for all possible configurations and pick the best results. Unfortunately, the search space is often too large for this approach to be feasible. These approaches could be classified into 3 broad categories \cite{inpar2012}:
+There are various approaches to auto-tuning, which could be classified into 3 broad categories \cite{inpar2012}:
 \begin{description}
 	\item[Model-based optimization] involves analytically constructing a performance model specific to the underlying hardware and does code transformation accordingly. However, such models are generally difficult to build.
-	\item[Empirical optimization] searches for the best configuration by picking one initial configuration, generating code, benchmarking them on the actual hardware, determining the next configuration to be tested and repeat the whole process until an end condition is satisfied. It takes considerably more time than the model-based optimization and its performance depends heavily on the search method. There is a tradeoff between faster running time and more accuracy.
-	\item[Predictive optimization] combines the first to approaches, enhancing the empirical optimization modeling/predicting the running time instead of actually running time. In this project we will use this approach and use machine learning algorithms for the prediction part.
+	\item[Empirical optimization] searches for the best configuration by measuring the actual running time of a subset of all configurations. Usually, the subset is determined on-the-fly with a search method. If the subset is the whole search space itself, then this equals to exhaustive search. This approach takes considerably more time than the model-based approach, and there is a tradeoff between faster running time and better results.
+	\item[Predictive optimization] combines the first two approaches, enhancing the empirical optimization by modeling/predicting the running time instead of benchmarking on real hardware. In this project we will use this approach and use machine learning algorithms for the prediction part.
 \end{description}
 
 \subsection{Stencil Computation}
 Stencil computation is used in wide range applications from solving system of Partial Differential Equations (PDEs) to filtering in image processing. It iterates over timesteps and performs stencil operations on all points in a grid in each iteration. Stencil operation on a point updates its value to a linear combination\footnote{In other words, weighted sum} of its nearest neighbors, within a fixed distance, and sometimes itself. An example 3D 25-point stencil is shown in Figure~\ref{fig:25-point_stencil}. We will use this stencil in our benchmark application.
+
+%\begin{figure}[!th]
+%\centering
+%\begin{minipage}{.5\textwidth}
+%\centering
+%\includegraphics[width=0.25\textwidth]{./images/25-point-stencil.pdf}
+%\caption{Illustration of a 3D 25-point stencil (4 neighbors in each direction). (Courtesy of NVIDIA)}
+%\label{fig:25-point_stencil}
+%\end{minipage}
+%\begin{minipage}
+%\centering
+%\includegraphics[width=0.25\textwidth]{./images/gpu-architecture.pdf}
+%\caption{NVIDIA GPU architecture (Courtesy of NVIDIA)}
+%\label{fig:gpu-arch}
+%\end{minipage}
+%\end{figure}
 
 \begin{figure*}[!t]
 \centering
@@ -39,7 +55,7 @@ The programming model for NVIDIA GPUs is called CUDA (Compute Unified Device Arc
 
 A set of all threads that is used to execute a kernel is referred to as a ``grid" in CUDA context. For each grid, the threads are divided into groups called thread blocks (for scalability reasons ..cite CUDA Programmming Handbook). Threads in the same block will be executed on the same GPU core, and will be able to share resources and synchronize. The block size affects the resources usage on a core and determines how many threads will be able to execute on the whole GPU device in total, and thus it is one of the most important tuning parameters of a GPU program.
 
-Given that a stencil computation is bandwidth bound, the keys to optimize it are simply
+Given that a stencil computation is bandwidth bound, the keys to optimize its applications are simply:
 \begin{enumerate}
 	\item Optimizing for highest memory bandwidth by
 		\begin{enumerate}
@@ -58,7 +74,7 @@ Ganapathi et al.\ took an interesting approach in tuning stencil computation on 
 
 Observing that the BRT and KCCA algorithms perform well, I chose to study 2 regression tree algorithms and 2 kernel algorithms: (Gradient) Boosted Regression Tree, Random Forest, Kernel Ridge Regression, and Kernel Canonical Correlation Analysis.
 \begin{description}
-\item[Regression Trees] Regression Trees predict by recursively dividing input space to constant region. They are interesting to auto-tuning because they are non-parametric. That is, they don't need to know the probability distribution of the latent variable. Apart from quick decision time, the splitting condition can help in learning what parameters is crucial in tuning, which is always good to know regardless of how obvious they are. However, they do have drawbacks. Regression trees have high variance since each different decision at the splitting node can lead to totally different conditions later on down the tree. However, this can be avoided by additive algorithms. \emph{Boosted Regression Tree} is a committee-based algorithm that tries to create a strong learner from multiple weak learners. It iteratively combines regression trees from learning samples that are weighted so that the ones that were previously classified wrong has more weight (Learning from mistakes). \emph{Random Forest} is another way by combining random trees together.
+\item[Regression Trees] Regression Trees predict by recursively dividing input space to constant region. They are interesting to auto-tuning because they are non-parametric. That is, they don't need to know the probability distribution of the latent variable. Apart from quick decision time, the splitting condition can help in learning what parameters is crucial in tuning, which is always good to know regardless of how obvious they are. However, they do have drawbacks. Regression trees have high variance since each different decision at the splitting node can lead to totally different conditions later on down the tree. However, this can be avoided by additive algorithms. \textbf{\emph{Boosted Regression Tree}} is a committee-based algorithm that tries to create a strong learner from multiple weak learners. It iteratively combines regression trees from learning samples that are weighted so that the ones that were previously classified wrong has more weight (Learning from mistakes). \textbf{\emph{Random Forest}} is another way by combining random trees together.
 \item[Kernel Canonical Correlation Analysis] is a kernelized version of Canonical Correlation Analysis.\cite{KICA} It is similar to PCA in essence. The algorithm is previously mentioned in last paragraph. The projection can be viewed as discovering the generating factors that lies behind two sets of data. For example, in auto-tuning configurations and observed running times are the two sets of data and the maximal correlation projection can be considered the projection of all deciding hardware and application constraints summarized in just one dimension. I'm very interested and intrigued by this. Thus, I include it here even though it seems to be an overkill for this problem. (Solving KCCA equals to solving generalized eigenvector problem, thus it has $O(n^3)$ complexity.)
 \item[Kernel Ridge Regression] I add this
 \end{description}

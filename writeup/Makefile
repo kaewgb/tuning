@@ -3,7 +3,7 @@ default: report.pdf
 SOURCES=				\
 	report.tex			\
 	_intro.tex			\
-	_background.tex 	\
+	_background.tex		\
 	_algo.tex		\
 	_setup.tex		\
 	_results.tex		\
@@ -14,6 +14,17 @@ report.pdf: $(SOURCES)
 	bibtex report
 	pdflatex $<
 	pdflatex $<
+
+
+RESULTS_ONLY = \
+	graphs.tex \
+
+graphs.pdf: $(RESULTS_ONLY)
+	pdflatex $<
+	bibtex report
+	pdflatex $<
+	pdflatex $<
+
 
 .PHONY:	clean
 

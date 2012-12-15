@@ -52,7 +52,9 @@
 		<Unit filename="gentwo.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="hc.py" />
+		<Unit filename="hc.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="header.h" />
 		<Unit filename="hypterm2.cu">
 			<Option virtualFolder="CUDA Sources/" />
@@ -84,7 +86,9 @@
 		<Unit filename="regression.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
-		<Unit filename="reorder.py" />
+		<Unit filename="reorder.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="run.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
@@ -115,6 +119,7 @@
 		<Unit filename="util.h" />
 		<Unit filename="util_cpu.cpp" />
 		<Unit filename="util_cpu.h" />
+		<Unit filename="writeup/Makefile" />
 		<Unit filename="writeup/_algo.tex" />
 		<Unit filename="writeup/_background.tex" />
 		<Unit filename="writeup/_conclusion.tex" />

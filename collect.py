@@ -32,16 +32,15 @@ print 'total: %d, ntrain: %d, num_parts: %d'%(len(db), ntrain, len(db)/ntrain);
 
 #do_regression_tree(x, y, train_idcs[0]);
 
-#gbst = do_gradient_boost(x, y, train_idcs[0]);
-#gbst_avg = do_gradient_boost(x, y, train_idcs[0]);
-#for train_idx in train_idcs[1:]:
-#	temp = do_gradient_boost(x, y, train_idx);
-#	gbst_avg = map(lambda (x, y): x+y, zip(gbst_avg, temp));
-#
-#gbst_avg = map(lambda x: x/len(train_idcs), gbst_avg);
+gbst = do_gradient_boost(x, y, train_idcs[0]);
+gbst_avg = do_gradient_boost(x, y, train_idcs[0]);
+for train_idx in train_idcs[1:]:
+	temp = do_gradient_boost(x, y, train_idx);
+	gbst_avg = map(lambda (x, y): x+y, zip(gbst_avg, temp));
+
+gbst_avg = map(lambda x: x/len(train_idcs), gbst_avg);
 
 rf = do_random_forest(x, y, train_idcs[0]);
-exit();
 rf_avg = do_random_forest(x, y, train_idcs[0]);
 for train_idx in train_idcs[1:]:
 	temp = do_random_forest(x, y, train_idx);
