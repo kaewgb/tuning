@@ -1,0 +1,27 @@
+#!/bin/bash
+gnuplot << EOF
+
+# $1 data file
+# $2 output filename
+
+#set terminal postscript enhanced color
+set terminal pdf enhanced color
+
+set style data histogram
+set style histogram cluster gap 1
+
+set style fill solid border rgb "black"
+set auto x
+set yrange [0:*]
+
+set output "compare_all.pdf"
+
+set title "Measured vs Predicted Running time"
+set ylabel "Execution Time Per Timestep (usec)" offset 0.5, 0
+set xlabel "Benchmark kernel"
+
+plot 'compare_all.dat' using 2:xtic(1) title col, \
+        '' using 3:xtic(1) title col, \
+        '' using 4:xtic(1) title col, \
+        '' using 5:xtic(1) title col, \
+        '' using 6:xtic(1) title col
