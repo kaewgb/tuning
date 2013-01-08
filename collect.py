@@ -1,29 +1,10 @@
-import sys, re, string
+import sys, re, string, time
+from db import *
 from regression import *
 from scikit_wrapper import *
 from sklearn.metrics import mean_squared_error
 
-
-def db_to_x_y(db):
-	x = map(lambda r: r[:-1], db);
-	y = map(lambda r: r[-1], db);
-	return (x, y);
-
-db = list();
-for filename in sys.argv[1:]:
-	with open(filename, 'r') as f:
-		lines = filter(lambda l: l.find('inf') < 0,f.readlines());
-
-		# split with '_', '|', ','
-		records = map(lambda l: re.split(r'_|\||,', l.strip())[:9], lines);
-		# convert str to float(
-		records = map(lambda r: map(float, r), records);
-		# remove the global_pad field
-		records = map(lambda r: r[:4]+r[5:], records);
-
-		db.extend(records);
-
-#print db;
+db = create_db(sys.argv[1:]);
 (x, y) = db_to_x_y(db);
 
 ntrain = 1000;
@@ -32,7 +13,9 @@ print 'total: %d, ntrain: %d, num_parts: %d'%(len(db), ntrain, len(db)/ntrain);
 
 #do_regression_tree(x, y, train_idcs[0]);
 
+start = time.time();
 gbst = do_gradient_boost(x, y, train_idcs[0]);
+print "gradient boost time", time.time()-start;
 gbst_avg = do_gradient_boost(x, y, train_idcs[0]);
 for train_idx in train_idcs[1:]:
 	temp = do_gradient_boost(x, y, train_idx);
@@ -40,7 +23,9 @@ for train_idx in train_idcs[1:]:
 
 gbst_avg = map(lambda x: x/len(train_idcs), gbst_avg);
 
+start = time.time();
 rf = do_random_forest(x, y, train_idcs[0]);
+print "random forest", time.time()-start;
 rf_avg = do_random_forest(x, y, train_idcs[0]);
 for train_idx in train_idcs[1:]:
 	temp = do_random_forest(x, y, train_idx);

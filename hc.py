@@ -1,57 +1,45 @@
-import sys, re, string, random
+import sys, re, time, random
+from db import *
 
-# Simple
-block_dim_choices 	= [4, 8, 16, 32, 64, 128, 256];
-thread_z_choices 	= [4, 8, 16, 32, 64];
-maxrreg_choices		= [16, 20, 24, 28, 32];
-pad_choices			= [32, 128, 256];
-smem_choices		= [16, 48];
-bypass_l1_choices	= [0, 1];
+kernel = 'simple'
 
-# Onepass
-#block_dim_x_choices = [4, 8, 16, 32, 64, 128, 256];
-#block_dim_y_choices = [4, 8, 16, 20, 24, 32, 40, 64, 80, 96, 128, 256];
-#thread_z_choices 	= [4, 8, 16, 32, 48, 64];
-#maxrreg_choices		= [32, 40, 48, 52, 64];
-#pad_choices			= [32, 128, 256];
-#smem_choices		= [16, 48];
-#bypass_l1_choices	= [0, 1];
-
-def db_to_lookup_db(db):
-	x = map(lambda r: r[:-1], db);
-	y = map(lambda r: r[-1], db);
-	return [string.join(x, ' '), y];
-
-def lookup(conf, db):
-	conf = map(float, conf); # to deal with 4.0 vs 4
-	conf = map(str, conf);
-	try:
-		return db[string.join(conf, ' ')];
-	except:
-		return [float('inf'), float('inf')];
-
-db = dict();
-for filename in sys.argv[1:]:
-	with open(filename, 'r') as f:
-		lines = f.readlines();
-        records = map(lambda l: l.split(), lines);
-        for record in records:
-			x = record[:7];
-			y = [float(record[11]), float(record[7])]; # for GBRT [predicted, measured]
-			db[string.join(x, ' ')] = y;
-
-
-# Simple
-choices = [block_dim_choices, block_dim_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
-# Onepass
-#choices = [block_dim_x_choices, block_dim_y_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
-
-random.seed();
-for i in range(0, 1000):
+if kernel == 'simple':
 	# Simple
-	best_conf = [16, 16, 8, 32, 32, 48, 0];
+	block_dim_choices 	= [4, 8, 16, 32, 64, 128, 256];
+	thread_z_choices 	= [4, 8, 16, 32, 64];
+	maxrreg_choices		= [16, 20, 24, 28, 32];
+	pad_choices			= [32, 128, 256];
+	smem_choices		= [16, 48];
+	bypass_l1_choices	= [0, 1];
+
+	choices = [block_dim_choices, block_dim_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
+
+else:
 	# Onepass
-#	best_conf = [16, 16, 8, 64, 32, 48, 0];
+	block_dim_x_choices = [4, 8, 16, 32, 64, 128, 256];
+	block_dim_y_choices = [4, 8, 16, 20, 24, 32, 40, 64, 80, 96, 128, 256];
+	thread_z_choices 	= [4, 8, 16, 32, 48, 64];
+	maxrreg_choices		= [32, 40, 48, 52, 64];
+	pad_choices			= [32, 128, 256];
+	smem_choices		= [16, 48];
+	bypass_l1_choices	= [0, 1];
+
+	choices = [block_dim_x_choices, block_dim_y_choices, thread_z_choices, maxrreg_choices, pad_choices, smem_choices, bypass_l1_choices];
+
+
+db = create_lookup_db(sys.argv[1:]);
+random.seed();
+
+for i in range(0, 3):#1000):
+
+	start = time.time();
+	if kernel == 'simple':
+		# Simple
+		best_conf = [16, 16, 8, 32, 32, 48, 0];
+	else:
+		# Onepass
+		best_conf = [16, 16, 8, 64, 32, 48, 0];
+
 	ymin = lookup(best_conf, db);
 	#print ymin;
 
@@ -68,3 +56,4 @@ for i in range(0, 1000):
 			best_conf = test_conf;
 
 	print ymin[1];
+	print 'time:', time.time()-start;

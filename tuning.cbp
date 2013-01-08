@@ -42,7 +42,13 @@
 		<Unit filename="config_one.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
+		<Unit filename="db.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="dummy.conf" />
+		<Unit filename="genetic.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="genone.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
