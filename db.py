@@ -22,7 +22,15 @@ def db_to_x_y(db):
 	y = map(lambda r: r[-1], db);
 	return (x, y);
 
-def create_lookup_db(files):
+def create_lookup_db(files, method='gbrt'):
+	predicted = 9;
+	measured = 7;
+	if method == 'rf':
+		predicted = 11;
+	elif method == 'krr':
+		predicted = 7;
+		measured = 8;
+
 	db = dict();
 	for filename in files:
 		with open(filename, 'r') as f:
@@ -30,9 +38,11 @@ def create_lookup_db(files):
 
 			records = map(lambda l: l.split(), lines);
 			for record in records:
-				x = record[:7];
-				y = [float(record[11]), float(record[7])]; # for GBRT [predicted, measured]
+				x = map(float, record[:7]); # to deal with 4.0 vs 4
+				x = map(str, x);
+				y = [float(record[predicted]), float(record[measured])]; #[predicted, measured]
 				db[string.join(x, ' ')] = y;
+
 	return db;
 
 def lookup(conf, db):
@@ -41,4 +51,5 @@ def lookup(conf, db):
 	try:
 		return db[string.join(conf, ' ')];
 	except:
+#		print string.join(conf, ' ');
 		return [float('inf'), float('inf')];

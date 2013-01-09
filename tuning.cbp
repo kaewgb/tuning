@@ -98,6 +98,9 @@
 		<Unit filename="run.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
+		<Unit filename="runner.py">
+			<Option virtualFolder="Python Scripts/" />
+		</Unit>
 		<Unit filename="scikit_wrapper.py">
 			<Option virtualFolder="Python Scripts/" />
 		</Unit>
