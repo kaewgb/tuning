@@ -1,6 +1,6 @@
 import re, string
 
-def create_db(files):
+def create_db_from_profile(files):
 	db = list();
 	for filename in files:
 		with open(filename, 'r') as f:
@@ -15,6 +15,17 @@ def create_db(files):
 
 			db.extend(records);
 
+	return db;
+
+def get_x_from_file(files):
+	db = list();
+	for filename in files:
+		with open(filename, 'r') as f:
+			lines = filter(lambda l: l.find('inf') < 0,f.readlines());
+			records = map(lambda l: l.split(), lines);
+			records = map(lambda r: r[:7], records);
+			records = map(lambda r: map(float, r), records);
+			db.extend(records);
 	return db;
 
 def db_to_x_y(db):

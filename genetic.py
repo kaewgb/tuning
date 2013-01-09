@@ -1,11 +1,12 @@
 import sys, time
 from db import *
 
-db = create_db(sys.argv[1:]);
-(x, y) = db_to_x_y(db);
+x = get_x_from_file(sys.argv[1:]);
 
 start = time.time();
-parents = [1, 2, 3];
+#onepass.dat - 0-999: [419, 31, 227], 1000-1999: [1831, 1016, 1541], 2000-2999: [2346, 2670, 2460]
+#simple_shuffled.dat - 0-999: [482, 839, 776], 1000-1999: [1075, 1183, 1855], 2000-2999: [2548, 2182, 2286]
+parents = [482, 839, 776];
 parms = [set() for i in range(0,7)];
 
 for idx in parents:
@@ -20,7 +21,7 @@ for i in range(0,7):
 
 
 global_pad = 128;
-with open('kcca.conf', 'w') as fout:
+with open('kcca0.conf', 'w') as fout:
 	for block_dim_x in parms[0]:
 		for block_dim_y in parms[1]:
 			for thread_z in parms[2]:

@@ -4,7 +4,7 @@ from regression import *
 from scikit_wrapper import *
 from sklearn.metrics import mean_squared_error
 
-db = create_db(sys.argv[1:]);
+db = create_db_from_profile(sys.argv[1:]);
 (x, y) = db_to_x_y(db);
 
 ntrain = 1000;
