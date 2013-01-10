@@ -5,6 +5,8 @@ from sklearn import tree
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import RandomForestRegressor
 
+num_estimators = 10;
+
 def do_gradient_boost(x, y, train_idx):
 
 	x_train = x[train_idx[0]:train_idx[1]];
@@ -18,7 +20,7 @@ def do_gradient_boost(x, y, train_idx):
 #			loss='ls');
 
 	clf = GradientBoostingRegressor( \
-			n_estimators=10, \
+			n_estimators=num_estimators, \
 			learn_rate=1.0, \
 			max_depth=4, \
 			random_state=0, \
@@ -52,7 +54,7 @@ def do_random_forest(x, y, train_idx):
 	x_train = x[train_idx[0]:train_idx[1]];
 	y_train = y[train_idx[0]:train_idx[1]];
 
-	clf = RandomForestRegressor();
+	clf = RandomForestRegressor(n_estimators=num_estimators);
 	clf.fit(x_train, y_train);
 
 	#print_trees(clf.estimators_, 'rftree');

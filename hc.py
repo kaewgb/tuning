@@ -3,7 +3,7 @@ from db import *
 
 
 kernel = 'onepass'
-method = 'krr' #method = 'gbrt'|'rf'|'krr'
+method = 'rf' #method = 'gbrt'|'rf'|'krr'
 input_file = 'sorted.dat';
 if method == 'krr':
 	input_file = 'krr_sorted.dat';
@@ -35,7 +35,8 @@ else:
 db = create_lookup_db([input_file], method=method);
 random.seed();
 
-for i in range(0, 3):#1000):
+avg = 0.0;
+for i in range(0, 1000):
 	random.seed();
 	start = time.time();
 	if kernel == 'simple':
@@ -49,8 +50,9 @@ for i in range(0, 3):#1000):
 
 	ymin = lookup(best_conf, db);
 	#print ymin;
-	fname = '%s%d.conf'%(method, i);
-	with open(fname, 'w') as fout:
+#	fname = '%s%d.conf'%(method, i);
+#	with open(fname, 'w') as fout:
+	if True:
 		for i in range(0, 75):
 			count = 0;
 			#y = (float('inf'), float('inf'));
@@ -68,13 +70,18 @@ for i in range(0, 3):#1000):
 				ymin = y;
 				best_conf = test_conf;
 
-			for t in test_conf[:4]:
-				print>>fout, t,
-			print>>fout, '128',
-			for t in test_conf[4:]:
-				print>>fout, t,
-			print>>fout
+			# print out test configurations
+#			for t in test_conf[:4]:
+#				print>>fout, t,
+#			print>>fout, '128',
+#			for t in test_conf[4:]:
+#				print>>fout, t,
+#			print>>fout
 #			print count
 
-	print ymin[1];
-	print 'time:', time.time()-start;
+	#print ymin[1];
+	#print 'time:', time.time()-start;
+
+	avg = avg + ymin[1];
+
+print avg/1000.0;
